@@ -1,0 +1,4 @@
+parameters:
+    table_prefix:
+        app: tbl_
+#        core: tbl_core_
