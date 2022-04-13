@@ -27,11 +27,21 @@ VALUES(:lgn, :pwd, :eml, :stt, :idl, :dc, :du)',
                 'lgn' => 'admin',
                 'pwd' => '$2y$13$Wvq4mcLeYVd6cI4jh.ydI.jTJsVwDpnW0RQlrno4onCN90gwAxz8q',
                 'eml' => 'admin@site.com',
-                'stt' => 1, 'idl' => false,
+                'stt' => 1,
+                'idl' => false,
                 'dc'  => (new \DateTime())->format('Y-m-d H:i:s'),
                 'du'  => (new \DateTime())->format('Y-m-d H:i:s'),
             ]);
         $this->addSql('INSERT INTO tbl_core_user_core_user_role (core_user_id, core_user_role_id) SELECT id, 1 FROM tbl_core_user WHERE login = :lgn', ['lgn' => 'admin',]);
+
+        // TODO 2022-04-13: add session create table
+        $this->addSql('CREATE TABLE tbl_core_sessions (
+    sess_id VARCHAR(128) PRIMARY KEY NOT NULL,
+    sess_data TEXT NOT NULL,
+    sess_lifetime INTEGER NOT NULL,
+    sess_time INTEGER NOT NULL
+)');
+        $this->addSql('CREATE INDEX sessions_sess_lifetime_idx ON tbl_core_sessions (sess_lifetime);');
     }
 
     public function down(Schema $schema): void
@@ -40,5 +50,6 @@ VALUES(:lgn, :pwd, :eml, :stt, :idl, :dc, :du)',
         $this->addSql('DROP TABLE tbl_core_user');
         $this->addSql('DROP TABLE tbl_core_user_core_user_role');
         $this->addSql('DROP TABLE tbl_core_user_role');
+        $this->addSql('DROP TABLE tbl_core_sessions');
     }
 }

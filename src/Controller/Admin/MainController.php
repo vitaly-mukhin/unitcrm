@@ -6,15 +6,23 @@ use App\Entity\CoreUser;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin', name: 'admin_main')]
     public function index(): Response
     {
-        // $this->getParameter('kernel.')
+        $routeBuilder = $this->container->get(AdminUrlGenerator::class);
+
+        return $this->redirect(
+            $routeBuilder
+                ->setController(CoreUserCrudController::class)
+                ->generateUrl()
+        );
+
 
         return parent::index();
 

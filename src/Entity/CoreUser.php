@@ -14,8 +14,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Index(columns: ['date_created'], name: 'idx_date_created')]
 class CoreUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const STATE_OFF = 0, STATE_ON = 1;
+
+    const IS_DELETED_YES = true, IS_DELETED_NO = false;
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer')]
     private $id;
 
@@ -40,7 +44,7 @@ class CoreUser implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $is_deleted;
 
-    #[ORM\ManyToMany(targetEntity: CoreUserRole::class)]
+    #[ORM\ManyToMany(targetEntity: CoreUserRole::class, orphanRemoval: true)]
     private $roles;
 
     public function __construct()
@@ -85,7 +89,13 @@ class CoreUser implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = [];
+
+        foreach ($this->roles->getIterator() as $role) {
+            if ($role->isStateOn()) {
+                $roles[] = $role->getSymfonyRole();
+            }
+        }
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 

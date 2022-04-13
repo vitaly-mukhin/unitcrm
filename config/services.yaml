@@ -25,6 +25,11 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, method: loadClassMetadata }
 
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        arguments:
+            - '%env(DATABASE_URL)%'
+            - { db_table: "@=container.getParameter('table_prefix')['app'] ~ 'core_sessions'" }
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:

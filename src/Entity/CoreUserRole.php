@@ -8,6 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CoreUserRoleRepository::class)]
 class CoreUserRole
 {
+    const ROLE_USER = 0,
+        ROLE_ADMIN = 1;
+
+    const STATE_OFF = 0,
+        STATE_ON = 1;
+
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     private $id;
@@ -17,6 +23,19 @@ class CoreUserRole
 
     #[ORM\Column(type: 'smallint')]
     private $state;
+
+    public function getSymfonyRole(): string
+    {
+        return [
+                   self::ROLE_USER  => 'ROLE_USER',
+                   self::ROLE_ADMIN => 'ROLE_ADMIN',
+               ][$this->id];
+    }
+
+    public function isStateOn(): bool
+    {
+        return $this->getState() === self::STATE_ON;
+    }
 
     public function getId(): ?int
     {
